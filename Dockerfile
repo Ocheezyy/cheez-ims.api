@@ -12,10 +12,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["cheez-ims-api.csproj", "cheez-ims.api/"]
-RUN dotnet restore "./cheez-ims.api/cheez-ims-api.csproj"
-COPY . .
-WORKDIR "/src/cheez-ims.api"
+COPY ["cheez-ims-api.csproj", "cheez-ims-api/"]
+RUN dotnet restore "./cheez-ims-api/cheez-ims-api.csproj"
+COPY . ./cheez-ims-api
+WORKDIR "/src/cheez-ims-api"
 RUN dotnet build "./cheez-ims-api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
