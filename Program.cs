@@ -13,12 +13,30 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+string ParsePostgresString(string pgConnectionString)
+{
+    // Example: postgresql://postgres:password@host:port/db_name
+    var uri = new Uri(pgConnectionString.Replace("postgresql://", "http://"));
+
+    var username = uri.UserInfo.Split(':')[0];
+    var password = uri.UserInfo.Split(':')[1];
+    var host = uri.Host;
+    var port = uri.Port;
+    var dbName = uri.AbsolutePath.TrimStart('/');
+
+    // Format to EF Core connection string: Host=host;Port=port;Database=db_name;Username=username;Password=password;
+    var efCoreConnectionString = $"Host={host};Port={port};Database={dbName};Username={username};Password={password};";
+
+    return efCoreConnectionString;
+}
+
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 var connectionString = string.IsNullOrEmpty(databaseUrl) ? builder.Configuration.GetConnectionString("DefaultConnection")
-    : databaseUrl;
+    : ParsePostgresString(databaseUrl);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
+
 
 
 
