@@ -1,4 +1,5 @@
 using cheez_ims_api.Data;
+using cheez_ims_api.models;
 using dotenv.net;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +36,12 @@ var connectionString = string.IsNullOrEmpty(databaseUrl) ? builder.Configuration
     : ParsePostgresString(databaseUrl);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString, o =>
+    {
+        o.MapEnum<Enums.PaymentMethod>("payment_method");
+        o.MapEnum<Enums.OrderStatus>("order_status");
+        o.MapEnum<Enums.PaymentStatus>("payment_status");
+    }));
 
 
 
