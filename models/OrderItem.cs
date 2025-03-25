@@ -10,10 +10,10 @@ namespace cheez_ims_api.models
         public decimal UnitPrice { get; set; }  // Price at time of order
 
         // Foreign Keys & Navigation Properties
-        public Guid OrderId { get; set; }
+        public required Guid OrderId { get; set; }
         public required Order Order { get; set; }
 
-        public Guid ProductId { get; set; }
+        public required Guid ProductId { get; set; }
         public required Product Product { get; set; }
     }
 }

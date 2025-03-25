@@ -1,11 +1,17 @@
-﻿namespace cheez_ims_api.models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace cheez_ims_api.models
 {
     public class Supplier
     {
         public Guid Id { get; set; }
+        [MaxLength(60)]
         public required string Name { get; set; }
+        [MaxLength(50)]
         public required string ContactEmail { get; set; }
+        [MaxLength(35)]
         public required string Phone { get; set; }
+        [MaxLength(100)]
         public required string Address { get; set; }
 
         // Navigation Property

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace cheez_ims_api.models
 {
@@ -7,16 +8,18 @@ namespace cheez_ims_api.models
         public Guid Id { get; set; }
 
         [Column(TypeName = "timestamp with time zone")]
-        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+        public DateTime SaleDate { get; set; } = DateTime.UtcNow;
+        [Column(TypeName = "numeric(18,2)")]
+        public decimal TotalAmount { get; set; }
+        public required Enums.PaymentMethod PaymentMethod { get; set; }
+        public Enums.OrderStatus Status { get; set; } = Enums.OrderStatus.Pending;
+        public Enums.PaymentStatus PaymentStatus { get; set; } = Enums.PaymentStatus.Pending;
 
-        [Column(TypeName = "timestamp with time zone")]
-        public DateTime? DeliveryDate { get; set; }  // Nullable until delivered
-        public string Status { get; set; } = "Pending";  // e.g., "Shipped", "Delivered"
+        // Foreign Keys & Navigation Properties
+        [MaxLength(75)]
+        public required string UserId { get; set; }
+        public required User User { get; set; }
 
-        // Foreign Key & Navigation Properties
-        public Guid SupplierId { get; set; }
-        public required Supplier Supplier { get; set; }
-
-        public required List<OrderItem> OrderItems { get; set; }  // One-to-Many: Order → OrderItems
+        public List<OrderItem>? OrderItems { get; set; } // Items in the sale
     }
 }

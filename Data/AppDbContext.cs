@@ -15,13 +15,10 @@ namespace cheez_ims_api.Data
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
-        public DbSet<Sale> Sales { get; set; }
-        public DbSet<SaleItem> SaleItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);  // Required for Identity
-            modelBuilder.HasPostgresExtension("uuid-ossp");
 
             // Configure relationships
             modelBuilder.Entity<Product>()
@@ -36,9 +33,9 @@ namespace cheez_ims_api.Data
                 .OnDelete(DeleteBehavior.SetNull);  // Prevent cascade delete
 
             modelBuilder.Entity<Order>()
-                .HasOne(o => o.Supplier)
+                .HasOne(o => o.User)
                 .WithMany()
-                .HasForeignKey(o => o.SupplierId);
+                .HasForeignKey(o => o.UserId);
 
             modelBuilder.Entity<OrderItem>()
                 .HasKey(oi => oi.Id);
@@ -52,23 +49,8 @@ namespace cheez_ims_api.Data
                 .HasOne(oi => oi.Product)
                 .WithMany(p => p.OrderItems)
                 .HasForeignKey(oi => oi.ProductId);
-
-            modelBuilder.Entity<Sale>()
-            .HasMany(s => s.SaleItems)
-            .WithOne(si => si.Sale)
-            .HasForeignKey(si => si.SaleId);
-
-            modelBuilder.Entity<Sale>()
-                .HasOne(s => s.User)
-                .WithMany()
-                .HasForeignKey(s => s.UserId)
-                .OnDelete(DeleteBehavior.SetNull); // Prevent cascade delete
-
-            // SaleItem relationships
-            modelBuilder.Entity<SaleItem>()
-                .HasOne(si => si.Product)
-                .WithMany()
-                .HasForeignKey(si => si.ProductId);
+            
+            DbSeed.Seed(modelBuilder);
         }
     }
 }
