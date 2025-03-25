@@ -367,3 +367,4 @@ FodyWeavers.xsd
 info.md
 cheez-ims-api.http
 .idea
+.env

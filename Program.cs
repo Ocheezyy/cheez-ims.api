@@ -15,17 +15,11 @@ builder.Services.AddSwaggerGen();
 
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 var connectionString = string.IsNullOrEmpty(databaseUrl) ? builder.Configuration.GetConnectionString("DefaultConnection")
-    : ParsePostgresString(databaseUrl);
+    : databaseUrl;
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
-static string ParsePostgresString(string url)
-{
-    var uri = new Uri(url);
-    var userInfo = uri.UserInfo.Split(':');
-    return $"Host={uri.Host};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
-}
 
 
 var app = builder.Build();
