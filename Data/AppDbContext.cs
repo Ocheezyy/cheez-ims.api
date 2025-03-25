@@ -50,7 +50,7 @@ namespace cheez_ims_api.Data
                 .WithMany(p => p.OrderItems)
                 .HasForeignKey(oi => oi.ProductId);
             
-            DbSeed.Seed(modelBuilder);
+            // DbSeed.Seed(modelBuilder);
         }
     }
 }
