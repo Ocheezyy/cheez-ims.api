@@ -2,6 +2,7 @@ using cheez_ims_api.Data;
 using cheez_ims_api.models;
 using dotenv.net;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 DotEnv.Load();
 
@@ -12,7 +13,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => c.EnableAnnotations());
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Cheez IMS API",  // Replace with your API name
+        Version = "v1",           // Ensures OpenAPI versioning works correctly
+        Description = "API for inventory management"
+    });
+    c.EnableAnnotations();
+});
 
 string ParsePostgresString(string pgConnectionString)
 {
@@ -62,7 +72,10 @@ var app = builder.Build();
 // }
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cheez IMS API v1");
+});
 
 app.UseHttpsRedirection();
 
