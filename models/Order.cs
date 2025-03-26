@@ -8,7 +8,8 @@ namespace cheez_ims_api.models
         public Guid Id { get; set; }
 
         [Column(TypeName = "timestamp with time zone")]
-        public DateTime SaleDate { get; set; } = DateTime.UtcNow;
+        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+        public DateTime? DeliveryDate { get; set; }
         [Column(TypeName = "numeric(18,2)")]
         public decimal TotalAmount { get; set; }
         public required Enums.PaymentMethod PaymentMethod { get; set; }
