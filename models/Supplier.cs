@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace cheez_ims_api.models
 {
@@ -14,6 +15,7 @@ namespace cheez_ims_api.models
         [MaxLength(100)]
         public required string Address { get; set; }
 
+        [JsonIgnore]
         // Navigation Property
         public List<Product>? Products { get; set; }  // One-to-Many: Supplier → Products
     }

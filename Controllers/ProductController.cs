@@ -18,12 +18,19 @@ namespace cheez_ims_api.Controllers
 
         // GET: api/products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] string include)
         {
-            return await _context.Products
-                .Include(p => p.Category)      // Include related Category
-                .Include(p => p.Supplier)      // Include related Supplier
-                .ToListAsync();
+            var query = _context.Products.AsQueryable();
+
+            if (!string.IsNullOrEmpty(include))
+            {
+                var includes = include.Split(',');
+                if (includes.Contains("category"))
+                    query = query.Include(p => p.Category);   // Include Category
+                if (includes.Contains("supplier"))
+                    query = query.Include(p => p.Supplier);   // Include Supplier
+            }
+            return await query.ToListAsync();
         }
 
         // GET: api/products/5
