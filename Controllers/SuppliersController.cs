@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using cheez_ims_api.Data;
 using cheez_ims_api.models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace cheez_ims_api.Controllers
 {
@@ -23,6 +24,7 @@ namespace cheez_ims_api.Controllers
 
         // GET: api/Suppliers
         [HttpGet]
+        [SwaggerOperation(OperationId = "GetSuppliers", Summary = "Get Suppliers", Tags = new[] { "Suppliers" })]
         public async Task<ActionResult<IEnumerable<Supplier>>> GetSuppliers()
         {
             return await _context.Suppliers.ToListAsync();
@@ -30,6 +32,7 @@ namespace cheez_ims_api.Controllers
 
         // GET: api/Suppliers/5
         [HttpGet("{id}")]
+        [SwaggerOperation(OperationId = "GetSupplierById", Summary = "Get Supplier By Id", Tags = new[] { "Suppliers" })]
         public async Task<ActionResult<Supplier>> GetSupplier(Guid id)
         {
             var supplier = await _context.Suppliers.FindAsync(id);
@@ -45,6 +48,7 @@ namespace cheez_ims_api.Controllers
         // PUT: api/Suppliers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [SwaggerOperation(OperationId = "UpdateSupplier", Summary = "Update Supplier", Tags = new[] { "Suppliers" })]
         public async Task<IActionResult> PutSupplier(Guid id, Supplier supplier)
         {
             if (id != supplier.Id)
@@ -76,6 +80,7 @@ namespace cheez_ims_api.Controllers
         // POST: api/Suppliers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [SwaggerOperation(OperationId = "CreateSupplier", Summary = "Create Supplier", Tags = new[] { "Suppliers" })]
         public async Task<ActionResult<Supplier>> PostSupplier(Supplier supplier)
         {
             _context.Suppliers.Add(supplier);
@@ -86,6 +91,7 @@ namespace cheez_ims_api.Controllers
 
         // DELETE: api/Suppliers/5
         [HttpDelete("{id}")]
+        [SwaggerOperation(OperationId = "DeleteSupplier", Summary = "Delete", Tags = new[] { "Suppliers" })]
         public async Task<IActionResult> DeleteSupplier(Guid id)
         {
             var supplier = await _context.Suppliers.FindAsync(id);

@@ -1,6 +1,7 @@
 ﻿using cheez_ims_api.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace cheez_ims_api.Controllers
 {
@@ -16,6 +17,7 @@ namespace cheez_ims_api.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(OperationId = "GetHealth", Summary = "Get Health", Tags = new[] { "Health" })]
         public async Task<IResult> GetHealth()
         {
             try

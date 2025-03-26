@@ -2,6 +2,7 @@
 using cheez_ims_api.models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace cheez_ims_api.Controllers
 {
@@ -18,6 +19,7 @@ namespace cheez_ims_api.Controllers
 
         // GET: api/categories
         [HttpGet]
+        [SwaggerOperation(OperationId = "GetCategories", Summary = "Get Categories", Tags = new[] { "Categories" })]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
             return await _context.Categories
@@ -26,6 +28,7 @@ namespace cheez_ims_api.Controllers
 
         // GET: api/categories/5
         [HttpGet("{id}")]
+        [SwaggerOperation(OperationId = "GetCategoryById", Summary = "Get Category By Id", Tags = new[] { "Categories" })]
         public async Task<ActionResult<Category>> GetCategory(Guid id)
         {
             var category = await _context.Categories
@@ -42,6 +45,7 @@ namespace cheez_ims_api.Controllers
 
         // POST: api/categories
         [HttpPost]
+        [SwaggerOperation(OperationId = "CreateCategory", Summary = "Create Category", Tags = new[] { "Categories" })]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
             // Basic validation
@@ -59,6 +63,7 @@ namespace cheez_ims_api.Controllers
 
         // PUT: api/categories/5
         [HttpPut("{id}")]
+        [SwaggerOperation(OperationId = "UpdateCategory", Summary = "Update Category", Tags = new[] { "Categories" })]
         public async Task<IActionResult> PutCategory(Guid id, Category category)
         {
             if (id != category.Id)
@@ -103,6 +108,7 @@ namespace cheez_ims_api.Controllers
 
         // DELETE: api/categories/5
         [HttpDelete("{id}")]
+        [SwaggerOperation(OperationId = "DeleteCategory", Summary = "Delete Category", Tags = new[] { "Categories" })]
         public async Task<IActionResult> DeleteCategory(Guid id)
         {
             var category = await _context.Categories.FindAsync(id);

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using cheez_ims_api.Data;
 using cheez_ims_api.models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace cheez_ims_api.Controllers
 {
@@ -23,6 +24,7 @@ namespace cheez_ims_api.Controllers
 
         // GET: api/OrderItems
         [HttpGet]
+        [SwaggerOperation(OperationId = "GetOrderItems", Summary = "Get Order Items", Tags = new[] { "OrderItems" })]
         public async Task<ActionResult<IEnumerable<OrderItem>>> GetOrderItems()
         {
             return await _context.OrderItems.ToListAsync();
@@ -30,6 +32,7 @@ namespace cheez_ims_api.Controllers
 
         // GET: api/OrderItems/5
         [HttpGet("{id}")]
+        [SwaggerOperation(OperationId = "GetOrderItemById", Summary = "Get Order Item By Id", Tags = new[] { "OrderItems" })]
         public async Task<ActionResult<OrderItem>> GetOrderItem(Guid id)
         {
             var orderItem = await _context.OrderItems.FindAsync(id);
@@ -45,6 +48,7 @@ namespace cheez_ims_api.Controllers
         // PUT: api/OrderItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [SwaggerOperation(OperationId = "UpdateOrderItem", Summary = "Update Order Item", Tags = new[] { "OrderItems" })]
         public async Task<IActionResult> PutOrderItem(Guid id, OrderItem orderItem)
         {
             if (id != orderItem.Id)
@@ -76,6 +80,7 @@ namespace cheez_ims_api.Controllers
         // POST: api/OrderItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [SwaggerOperation(OperationId = "AddOrderItem", Summary = "Add Order Item", Tags = new[] { "OrderItems" })]
         public async Task<ActionResult<OrderItem>> PostOrderItem(OrderItem orderItem)
         {
             _context.OrderItems.Add(orderItem);
@@ -86,6 +91,7 @@ namespace cheez_ims_api.Controllers
 
         // DELETE: api/OrderItems/5
         [HttpDelete("{id}")]
+        [SwaggerOperation(OperationId = "DeleteOrderItem", Summary = "Delete Order Item", Tags = new[] { "OrderItems" })]
         public async Task<IActionResult> DeleteOrderItem(Guid id)
         {
             var orderItem = await _context.OrderItems.FindAsync(id);

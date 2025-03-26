@@ -2,6 +2,7 @@
 using cheez_ims_api.models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace cheez_ims_api.Controllers
 {
@@ -18,6 +19,7 @@ namespace cheez_ims_api.Controllers
 
         // GET: api/products
         [HttpGet]
+        [SwaggerOperation(OperationId = "GetProducts", Summary = "Get Products", Tags = new[] { "Products" })]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] string? include = null)
         {
             var query = _context.Products.AsQueryable();
@@ -35,6 +37,7 @@ namespace cheez_ims_api.Controllers
 
         // GET: api/products/5
         [HttpGet("{id}")]
+        [SwaggerOperation(OperationId = "GetProductById", Summary = "Get Product By Id", Tags = new[] { "Products" })]
         public async Task<ActionResult<Product>> GetProduct(Guid id)
         {
             var product = await _context.Products
@@ -52,6 +55,7 @@ namespace cheez_ims_api.Controllers
 
         // POST: api/products
         [HttpPost]
+        [SwaggerOperation(OperationId = "AddProduct", Summary = "Add Product", Tags = new[] { "Products" })]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
             // Basic validation
@@ -77,6 +81,7 @@ namespace cheez_ims_api.Controllers
 
         // PUT: api/products/5
         [HttpPut("{id}")]
+        [SwaggerOperation(OperationId = "UpdateProduct", Summary = "Update Product", Tags = new[] { "Products" })]
         public async Task<IActionResult> PutProduct(Guid id, Product product)
         {
             if (id != product.Id)
@@ -125,6 +130,7 @@ namespace cheez_ims_api.Controllers
 
         // DELETE: api/products/5
         [HttpDelete("{id}")]
+        [SwaggerOperation(OperationId = "DeleteProduct", Summary = "Delete", Tags = new[] { "Products" })]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
             var product = await _context.Products.FindAsync(id);
