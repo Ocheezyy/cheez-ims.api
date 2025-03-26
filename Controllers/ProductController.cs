@@ -18,7 +18,7 @@ namespace cheez_ims_api.Controllers
 
         // GET: api/products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] string include)
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] string? include = null)
         {
             var query = _context.Products.AsQueryable();
 
