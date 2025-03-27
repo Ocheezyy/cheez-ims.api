@@ -52,11 +52,12 @@ namespace cheez_ims_api.Data
 
                 // Seed Users
                 var users = new Faker<User>()
-                    .RuleFor(u => u.Id, f => Guid.NewGuid().ToString())
+                    .RuleFor(u => u.Id, f => Guid.NewGuid())
                     .RuleFor(u => u.FirstName, f => f.Name.FirstName())
                     .RuleFor(u => u.LastName, f => f.Name.LastName())
                     .RuleFor(u => u.Email, f => f.Internet.Email())
                     .RuleFor(u => u.UserName, f => f.Internet.UserName())
+                    .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
                     .Generate(500);
                 context.Users.AddRange(users);
                 context.SaveChanges();
