@@ -15,7 +15,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowLocalhost",
         policy =>
         {
-            policy.WithOrigins("http://localhost:3000") // Change port if needed
+            policy.WithOrigins("http://localhost:5173") // Change port if needed
                   .AllowAnyMethod()
                   .AllowAnyHeader();
         });
