@@ -24,13 +24,13 @@ namespace cheez_ims_api.Controllers
         public async Task<ActionResult<IEnumerable<DashboardOverviewDto>>> GetDashboardOverview()
         {
             FormattableString query = $"""
-                SELECT 
-                    to_char(order_date, 'MM YY') AS Month, 
-                    DATE_TRUNC('month', order_date) AS SortDate, 
-                    SUM(total_amount) AS TotalAmount 
-                FROM public.orders 
-                WHERE order_date >= NOW() - INTERVAL '12 months' 
-                GROUP BY Month, SortDate 
+                SELECT
+                    to_char(order_date, 'Mon YY') AS Month,
+                    DATE_TRUNC('month', order_date) AS SortDate,
+                    SUM(total_amount) AS TotalAmount
+                FROM orders
+                WHERE order_date >= NOW() - INTERVAL '12 months'
+                GROUP BY Month, SortDate
                 ORDER BY SortDate;
                 """;
         
