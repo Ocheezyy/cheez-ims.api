@@ -1,14 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace cheez_ims_api.models
 {
     [Table("orders")]
+    [Index(nameof(OrderNumber), IsUnique = true)]
     public class Order
     {
         [Column("id")]
         public Guid Id { get; set; }
+        
+        [Column("order_number")]
+        public required int OrderNumber { get; set; }
 
         [Column("order_date", TypeName = "timestamp with time zone")]
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;

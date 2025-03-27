@@ -13,7 +13,7 @@ using cheez_ims_api.models;
 namespace cheez_ims_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250326231734_Initial")]
+    [Migration("20250327160136_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -28,6 +28,38 @@ namespace cheez_ims_api.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "payment_method", new[] { "bitcoin", "cash", "credit_card" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "payment_status", new[] { "paid", "pending", "refunded" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("cheez_ims_api.models.Activity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ActivityType")
+                        .HasColumnType("integer")
+                        .HasColumnName("activity_type");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("message");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("activity");
+                });
 
             modelBuilder.Entity("cheez_ims_api.models.Category", b =>
                 {
@@ -68,6 +100,10 @@ namespace cheez_ims_api.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("order_date");
 
+                    b.Property<int>("OrderNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("order_number");
+
                     b.Property<Enums.PaymentMethod>("PaymentMethod")
                         .HasColumnType("payment_method")
                         .HasColumnName("payment_method");
@@ -89,6 +125,9 @@ namespace cheez_ims_api.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderNumber")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -254,6 +293,17 @@ namespace cheez_ims_api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("users");
+                });
+
+            modelBuilder.Entity("cheez_ims_api.models.Activity", b =>
+                {
+                    b.HasOne("cheez_ims_api.models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("cheez_ims_api.models.Order", b =>

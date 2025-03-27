@@ -24,4 +24,13 @@ public static class Enums
         Paid, 
         Refunded
     }
+
+    public enum ActivityType
+    {
+        CreateOrder,
+        CreateProduct,
+        RestockProduct,
+        LowStockProduct,
+        CreateSupplier,
+    }
 }

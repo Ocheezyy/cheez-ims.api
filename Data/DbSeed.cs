@@ -65,6 +65,7 @@ namespace cheez_ims_api.Data
                 // Seed Orders
                 var orders = new Faker<Order>()
                     .RuleFor(o => o.Id, f => Guid.NewGuid())
+                    .RuleFor(o => o.OrderNumber, f => f.Random.Int())
                     .RuleFor(o => o.OrderDate, f => f.Date.Past(1).ToUniversalTime())
                     .RuleFor(o => o.DeliveryDate, (f, o) => f.Random.Bool(0.7f) ? f.Date.Soon(30, o.OrderDate).ToUniversalTime() : (DateTime?)null)
                     .RuleFor(o => o.TotalAmount, f => f.Random.Decimal(20, 2000))
@@ -85,6 +86,16 @@ namespace cheez_ims_api.Data
                     .RuleFor(oi => oi.UnitPrice, (f, oi) => products.First(p => p.Id == oi.ProductId).Price)
                     .Generate(5000);
                 context.OrderItems.AddRange(orderItems);
+                context.SaveChanges();
+
+                var activities = new Faker<Activity>()
+                    .RuleFor(a => a.Id, f => Guid.NewGuid())
+                    .RuleFor(a => a.ActivityType, f => f.PickRandom<Enums.ActivityType>())
+                    .RuleFor(a => a.Message, f => f.Lorem.Sentence()) // TODO: Setup function to get sentences
+                    .RuleFor(o => o.Timestamp, f => f.Date.Past(1).ToUniversalTime())
+                    .RuleFor(a => a.UserId, f => f.PickRandom(users).Id)
+                    .Generate(400);
+                context.Activities.AddRange(activities);
                 context.SaveChanges();
             }
         }

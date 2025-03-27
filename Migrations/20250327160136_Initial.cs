@@ -93,10 +93,32 @@ namespace cheez_ims_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "activity",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    activity_type = table.Column<int>(type: "integer", nullable: false),
+                    message = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_activity", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_activity_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "orders",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    order_number = table.Column<int>(type: "integer", nullable: false),
                     order_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     delivery_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     total_amount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
@@ -144,6 +166,11 @@ namespace cheez_ims_api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_activity_user_id",
+                table: "activity",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_order_items_order_id",
                 table: "order_items",
                 column: "order_id");
@@ -152,6 +179,12 @@ namespace cheez_ims_api.Migrations
                 name: "IX_order_items_product_id",
                 table: "order_items",
                 column: "product_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_orders_order_number",
+                table: "orders",
+                column: "order_number",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_orders_user_id",
@@ -172,6 +205,9 @@ namespace cheez_ims_api.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "activity");
+
             migrationBuilder.DropTable(
                 name: "order_items");
 

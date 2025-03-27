@@ -10,12 +10,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+
+const string corsOrigins = "ProdAndLocalhost";
+
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost",
+    options.AddPolicy(corsOrigins,
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173") // Change port if needed
+            policy.WithOrigins("http://localhost:5173", "https://cheez-ims.ocheezy.dev")
                   .AllowAnyMethod()
                   .AllowAnyHeader();
         });
@@ -69,7 +73,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-app.UseCors("AllowLocalhost");
+app.UseCors(corsOrigins);
 
 // using (var scope = app.Services.CreateScope())
 // {
