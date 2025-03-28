@@ -13,7 +13,7 @@ using cheez_ims_api.models;
 namespace cheez_ims_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250327201227_Initial")]
+    [Migration("20250328183402_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace cheez_ims_api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "activity_type", new[] { "create_order", "create_product", "create_supplier", "low_stock_product", "restock_product", "shipped_order" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "order_status", new[] { "canceled", "delivered", "pending", "returned", "shipped" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "order_status", new[] { "canceled", "delivered", "pending", "processing", "returned", "shipped" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "payment_method", new[] { "bitcoin", "cash", "credit_card" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "payment_status", new[] { "paid", "pending", "refunded" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "product_status", new[] { "discontinued", "in_stock", "low_stock", "out_of_stock" });
@@ -113,6 +113,12 @@ namespace cheez_ims_api.Migrations
                     b.Property<Enums.PaymentStatus>("PaymentStatus")
                         .HasColumnType("payment_status")
                         .HasColumnName("payment_status");
+
+                    b.Property<string>("ShippingAddress")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("shipping_address");
 
                     b.Property<Enums.OrderStatus>("Status")
                         .HasColumnType("order_status")
@@ -234,8 +240,8 @@ namespace cheez_ims_api.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
                         .HasColumnName("address");
 
                     b.Property<string>("ContactEmail")
@@ -255,6 +261,14 @@ namespace cheez_ims_api.Migrations
                         .HasMaxLength(35)
                         .HasColumnType("character varying(35)")
                         .HasColumnName("phone");
+
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("numeric(3,1)")
+                        .HasColumnName("rating");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
 
                     b.HasKey("Id");
 

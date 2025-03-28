@@ -111,6 +111,12 @@ namespace cheez_ims_api.Migrations
                         .HasColumnType("payment_status")
                         .HasColumnName("payment_status");
 
+                    b.Property<string>("ShippingAddress")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("shipping_address");
+
                     b.Property<Enums.OrderStatus>("Status")
                         .HasColumnType("order_status")
                         .HasColumnName("order_status");
@@ -231,8 +237,8 @@ namespace cheez_ims_api.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
                         .HasColumnName("address");
 
                     b.Property<string>("ContactEmail")
@@ -252,6 +258,14 @@ namespace cheez_ims_api.Migrations
                         .HasMaxLength(35)
                         .HasColumnType("character varying(35)")
                         .HasColumnName("phone");
+
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("numeric(3,1)")
+                        .HasColumnName("rating");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
 
                     b.HasKey("Id");
 

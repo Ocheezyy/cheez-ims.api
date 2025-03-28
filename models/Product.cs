@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace cheez_ims_api.models
 {
@@ -42,7 +43,8 @@ namespace cheez_ims_api.models
         [Column("supplier_id")]
         public required Guid SupplierId { get; set; }
         public required Supplier Supplier { get; set; }
-
+        
+        [JsonIgnore]
         public List<OrderItem>? OrderItems { get; set; }  // Orders containing this product
     }
 }

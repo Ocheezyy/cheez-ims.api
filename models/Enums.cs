@@ -12,11 +12,11 @@ public static class Enums
     public enum OrderStatus
     {
         Pending,
+        Processing,
         Shipped,
         Delivered,
         Canceled,
         Returned,
-        Processing
     }
 
     public enum PaymentStatus
@@ -42,5 +42,13 @@ public static class Enums
         LowStock,
         OutOfStock,
         Discontinued,
+    }
+
+    public enum SupplierStatus
+    {
+        Inactive,
+        OnHold,
+        New,
+        Active
     }
 }

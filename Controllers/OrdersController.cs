@@ -45,13 +45,15 @@ namespace cheez_ims_api.Controllers
             return await query.ToListAsync();
         }
 
-        // GET: api/Orders/5
+        // GET: api/Orders/uuid
         [HttpGet("{id}")]
         [SwaggerOperation(OperationId = "GetOrderById", Summary = "Get Order By Id", Tags = new[] { "Orders" })]
         public async Task<ActionResult<Order>> GetOrder(Guid id)
         {
             var order = await _context.Orders
                 .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.User)
                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if (order == null)

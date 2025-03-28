@@ -21,6 +21,10 @@ namespace cheez_ims_api.models
         [Column("delivery_date", TypeName = "timestamp with time zone")]
         public DateTime? DeliveryDate { get; set; }
         
+        [Column("shipping_address")]
+        [MaxLength(120)]
+        public required string ShippingAddress { get; set; }
+        
         [Column("total_amount", TypeName = "numeric(18,2)")]
         public decimal TotalAmount { get; set; }
         

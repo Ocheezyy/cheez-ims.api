@@ -25,9 +25,16 @@ namespace cheez_ims_api.Controllers
         // GET: api/Suppliers
         [HttpGet]
         [SwaggerOperation(OperationId = "GetSuppliers", Summary = "Get Suppliers", Tags = new[] { "Suppliers" })]
-        public async Task<ActionResult<IEnumerable<Supplier>>> GetSuppliers()
+        public async Task<ActionResult<IEnumerable<Supplier>>> GetSuppliers([FromQuery] string? include = null)
         {
-            return await _context.Suppliers.ToListAsync();
+            var query = _context.Suppliers.AsQueryable();
+
+            if (include != null && include.Contains("products"))
+            {
+                query.Include(s => s.Products);
+            }
+            
+            return await query.ToListAsync();
         }
 
         // GET: api/Suppliers/5

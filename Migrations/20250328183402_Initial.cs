@@ -14,7 +14,7 @@ namespace cheez_ims_api.Migrations
         {
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:Enum:activity_type", "create_order,create_product,create_supplier,low_stock_product,restock_product,shipped_order")
-                .Annotation("Npgsql:Enum:order_status", "canceled,delivered,pending,returned,shipped")
+                .Annotation("Npgsql:Enum:order_status", "canceled,delivered,pending,processing,returned,shipped")
                 .Annotation("Npgsql:Enum:payment_method", "bitcoin,cash,credit_card")
                 .Annotation("Npgsql:Enum:payment_status", "paid,pending,refunded")
                 .Annotation("Npgsql:Enum:product_status", "discontinued,in_stock,low_stock,out_of_stock");
@@ -40,7 +40,9 @@ namespace cheez_ims_api.Migrations
                     name = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
                     contact_email = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     phone = table.Column<string>(type: "character varying(35)", maxLength: 35, nullable: false),
-                    address = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                    address = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    rating = table.Column<decimal>(type: "numeric(3,1)", nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -124,6 +126,7 @@ namespace cheez_ims_api.Migrations
                     order_number = table.Column<int>(type: "integer", nullable: false),
                     order_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     delivery_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    shipping_address = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     total_amount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     payment_method = table.Column<Enums.PaymentMethod>(type: "payment_method", nullable: false),
                     order_status = table.Column<Enums.OrderStatus>(type: "order_status", nullable: false),

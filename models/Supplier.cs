@@ -23,8 +23,14 @@ namespace cheez_ims_api.models
         public required string Phone { get; set; }
         
         [Column("address")]
-        [MaxLength(100)]
+        [MaxLength(150)]
         public required string Address { get; set; }
+        
+        [Column("rating", TypeName = "numeric(3,1)")]
+        public required decimal Rating { get; set; }
+        
+        [Column("status")]
+        public required Enums.SupplierStatus Status { get; set; }
 
         [JsonIgnore]
         // Navigation Property

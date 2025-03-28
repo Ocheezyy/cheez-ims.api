@@ -5,6 +5,7 @@ namespace cheez_ims_api.Data
 {
     public static class DatabaseSeeder
     {
+        private static HashSet<int> usedOrderNumbers = new HashSet<int>();
         private static Enums.ProductStatus GetProductStatus(int stockQuantity, int reorderLevel, Faker f)
         {
             if (stockQuantity == 0)
@@ -79,17 +80,20 @@ namespace cheez_ims_api.Data
             {
                 var faker = new Faker();
                 
-                var categoryNames = faker.Commerce.Categories(60);
+                var categoryNames = faker.Commerce.Categories(25);
                 var categories = new List<Category>();
                 foreach (var categoryName in categoryNames)
                 {
-                    var newCategory = new Category()
+                    if (categories.Find(c => c.Name == categoryName) == null)
                     {
-                        Id = Guid.NewGuid(),
-                        Name = categoryName,
-                        Description = faker.Lorem.Sentence()
-                    };
-                    categories.Add(newCategory);
+                        var newCategory = new Category()
+                        {
+                            Id = Guid.NewGuid(),
+                            Name = categoryName,
+                            Description = faker.Lorem.Sentence()
+                        };
+                        categories.Add(newCategory);
+                    }
                 }
                 context.Categories.AddRange(categories);
                 context.SaveChanges();
@@ -99,7 +103,9 @@ namespace cheez_ims_api.Data
                     .RuleFor(s => s.Name, f => f.Company.CompanyName())
                     .RuleFor(s => s.ContactEmail, f => f.Internet.Email())
                     .RuleFor(s => s.Phone, f => f.Phone.PhoneNumber())
-                    .RuleFor(s => s.Address, f => f.Address.StreetAddress())
+                    .RuleFor(s => s.Status, f => f.PickRandom<Enums.SupplierStatus>())
+                    .RuleFor(p => p.Rating, f => Math.Round(f.Random.Decimal(0.0m, 5.0m), 1))
+                    .RuleFor(s => s.Address, f => $"{f.Address.StreetAddress()}, {f.Address.City()}, {f.Address.StateAbbr()} {f.Address.ZipCode()}")
                     .Generate(90);
                 context.Suppliers.AddRange(suppliers);
                 context.SaveChanges();
@@ -120,6 +126,7 @@ namespace cheez_ims_api.Data
                 for (int i = 0; i < random.Next(5, 30); i++)
                 {
                     var product = products[i];
+                    if (product.ReorderLevel <= 2) continue;
                     product.StockQuantity = product.ReorderLevel - random.Next(1, product.ReorderLevel - 2);
                     product.Status = GetProductStatus(product.StockQuantity, product.ReorderLevel, new Faker());
                 }
@@ -137,11 +144,22 @@ namespace cheez_ims_api.Data
                 context.Users.AddRange(users);
                 context.SaveChanges();
                 
+                
+                
                 var orders = new Faker<Order>()
                     .RuleFor(o => o.Id, f => Guid.NewGuid())
-                    .RuleFor(o => o.OrderNumber, f => f.Random.Int())
+                    .RuleFor(o => o.OrderNumber, f =>
+                    {
+                        int orderNumber;
+                        do
+                        {
+                            orderNumber = f.Random.Int(min: 1, max: 1000000);
+                        } while (!usedOrderNumbers.Add(orderNumber));
+                        return orderNumber;
+                    })
                     .RuleFor(o => o.OrderDate, f => f.Date.Past(1).ToUniversalTime())
                     .RuleFor(o => o.DeliveryDate, (f, o) => GetOrderDeliveryDate(o, f))
+                    .RuleFor(o => o.ShippingAddress, f => $"{f.Address.StreetAddress()}, {f.Address.City()}, {f.Address.StateAbbr()} {f.Address.ZipCode()}")
                     .RuleFor(o => o.TotalAmount, f => f.Random.Decimal(20, 2000))
                     .RuleFor(o => o.PaymentMethod, f => f.PickRandom<Enums.PaymentMethod>())
                     .RuleFor(o => o.Status, f => f.PickRandom<Enums.OrderStatus>())
