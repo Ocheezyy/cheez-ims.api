@@ -15,7 +15,8 @@ public static class Enums
         Shipped,
         Delivered,
         Canceled,
-        Returned
+        Returned,
+        Processing
     }
 
     public enum PaymentStatus

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,9 +26,23 @@ namespace cheez_ims_api.Controllers
         // GET: api/Orders
         [HttpGet]
         [SwaggerOperation(OperationId = "GetOrders", Summary = "Get Orders", Tags = new[] { "Orders" })]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrders([FromQuery] string? include = null)
         {
-            return await _context.Orders.ToListAsync();
+            var query = _context.Orders.AsQueryable();
+            if (!string.IsNullOrEmpty(include))
+            {
+                if (include.Contains("user"))
+                {
+                    query = query.Include(o => o.User);
+                }
+
+                if (include.Contains("order_items"))
+                {
+                    query = query.Include(o => o.OrderItems);
+                }
+            }
+
+            return await query.ToListAsync();
         }
 
         // GET: api/Orders/5

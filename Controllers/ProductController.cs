@@ -28,9 +28,9 @@ namespace cheez_ims_api.Controllers
             {
                 var includes = include.Split(',');
                 if (includes.Contains("category"))
-                    query = query.Include(p => p.Category);   // Include Category
+                    query = query.Include(p => p.Category);
                 if (includes.Contains("supplier"))
-                    query = query.Include(p => p.Supplier);   // Include Supplier
+                    query = query.Include(p => p.Supplier);
             }
             return await query.ToListAsync();
         }

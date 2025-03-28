@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace cheez_ims_api.models
 {
@@ -17,7 +18,8 @@ namespace cheez_ims_api.models
         // Foreign Keys & Navigation Properties
         [Column("order_id")]
         public required Guid OrderId { get; set; }
-        public required Order Order { get; set; }
+        [JsonIgnore]
+        public Order? Order { get; set; }
 
         [Column("product_id")]
         public required Guid ProductId { get; set; }

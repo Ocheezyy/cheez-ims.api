@@ -53,6 +53,21 @@ namespace cheez_ims_api.Data
             
             return f.Lorem.Sentence();
         }
+
+        private static DateTime? GetOrderDeliveryDate(Order order, Faker f)
+        {
+            if (order.Status == Enums.OrderStatus.Delivered)
+            {
+                return f.Date.Soon(30, order.OrderDate).ToUniversalTime();
+            }
+
+            if (order.Status == Enums.OrderStatus.Shipped)
+            {
+                return f.Random.Bool(0.7f) ? f.Date.Soon(30, order.OrderDate).ToUniversalTime() : (DateTime?)null;
+            }
+
+            return null;
+        }
         
         
         public static void Seed(IServiceProvider serviceProvider)
@@ -64,11 +79,18 @@ namespace cheez_ims_api.Data
             {
                 var faker = new Faker();
                 
-                var categories = new Faker<Category>()
-                    .RuleFor(c => c.Id, f => Guid.NewGuid())
-                    .RuleFor(c => c.Name, f => f.Commerce.Categories(1)[0])
-                    .RuleFor(c => c.Description, f => f.Lorem.Sentence())
-                    .Generate(110);
+                var categoryNames = faker.Commerce.Categories(60);
+                var categories = new List<Category>();
+                foreach (var categoryName in categoryNames)
+                {
+                    var newCategory = new Category()
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = categoryName,
+                        Description = faker.Lorem.Sentence()
+                    };
+                    categories.Add(newCategory);
+                }
                 context.Categories.AddRange(categories);
                 context.SaveChanges();
                 
@@ -119,7 +141,7 @@ namespace cheez_ims_api.Data
                     .RuleFor(o => o.Id, f => Guid.NewGuid())
                     .RuleFor(o => o.OrderNumber, f => f.Random.Int())
                     .RuleFor(o => o.OrderDate, f => f.Date.Past(1).ToUniversalTime())
-                    .RuleFor(o => o.DeliveryDate, (f, o) => f.Random.Bool(0.7f) ? f.Date.Soon(30, o.OrderDate).ToUniversalTime() : (DateTime?)null)
+                    .RuleFor(o => o.DeliveryDate, (f, o) => GetOrderDeliveryDate(o, f))
                     .RuleFor(o => o.TotalAmount, f => f.Random.Decimal(20, 2000))
                     .RuleFor(o => o.PaymentMethod, f => f.PickRandom<Enums.PaymentMethod>())
                     .RuleFor(o => o.Status, f => f.PickRandom<Enums.OrderStatus>())
