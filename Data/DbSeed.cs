@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Bogus;
 using cheez_ims_api.models;
 
@@ -6,6 +5,56 @@ namespace cheez_ims_api.Data
 {
     public static class DatabaseSeeder
     {
+        private static Enums.ProductStatus GetProductStatus(int stockQuantity, int reorderLevel, Faker f)
+        {
+            if (stockQuantity == 0)
+            {
+                var stockZeroOptions = new[] { Enums.ProductStatus.OutOfStock, Enums.ProductStatus.Discontinued };
+                return f.PickRandom(stockZeroOptions);
+            }
+            if (stockQuantity < reorderLevel)
+                return Enums.ProductStatus.LowStock;
+            
+            return Enums.ProductStatus.InStock;
+        }
+
+        private static string GetActivityMessage(Enums.ActivityType activityType, Product product, Order order, Supplier supplier, Faker f)
+        {
+            if (activityType == Enums.ActivityType.RestockProduct)
+            {
+                var random = new Random();
+                return $"Added {random.Next(1, 35)} units of {product.Name}";
+            }
+
+            if (activityType == Enums.ActivityType.CreateOrder)
+            {
+                return $"Created order #{order.OrderNumber}";
+            }
+
+            if (activityType == Enums.ActivityType.ShippedOrder)
+            {
+                return $"Shipped order #{order.OrderNumber}";
+            }
+
+            if (activityType == Enums.ActivityType.CreateSupplier)
+            {
+                return $"Added supplier {supplier.Name}";
+            }
+
+            if (activityType == Enums.ActivityType.CreateProduct)
+            {
+                return $"Created new product {product.Name}";
+            }
+
+            if (activityType == Enums.ActivityType.LowStockProduct)
+            {
+                return $"Marked {product.Name} as low stock";
+            }
+            
+            return f.Lorem.Sentence();
+        }
+        
+        
         public static void Seed(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
@@ -14,8 +63,7 @@ namespace cheez_ims_api.Data
             if (!context.Orders.Any())
             {
                 var faker = new Faker();
-
-                // Seed Categories
+                
                 var categories = new Faker<Category>()
                     .RuleFor(c => c.Id, f => Guid.NewGuid())
                     .RuleFor(c => c.Name, f => f.Commerce.Categories(1)[0])
@@ -23,8 +71,7 @@ namespace cheez_ims_api.Data
                     .Generate(110);
                 context.Categories.AddRange(categories);
                 context.SaveChanges();
-
-                // Seed Suppliers
+                
                 var suppliers = new Faker<Supplier>()
                     .RuleFor(s => s.Id, f => Guid.NewGuid())
                     .RuleFor(s => s.Name, f => f.Company.CompanyName())
@@ -34,8 +81,7 @@ namespace cheez_ims_api.Data
                     .Generate(90);
                 context.Suppliers.AddRange(suppliers);
                 context.SaveChanges();
-
-                // Seed Products
+                
                 var products = new Faker<Product>()
                     .RuleFor(p => p.Id, f => Guid.NewGuid())
                     .RuleFor(p => p.Name, f => f.Commerce.ProductName())
@@ -44,13 +90,20 @@ namespace cheez_ims_api.Data
                     .RuleFor(p => p.Price, f => f.Random.Decimal(5, 500))
                     .RuleFor(p => p.StockQuantity, f => f.Random.Int(10, 500))
                     .RuleFor(p => p.ReorderLevel, f => f.Random.Int(1, 20))
+                    .RuleFor(p => p.Status, (f, p) => GetProductStatus(p.StockQuantity, p.ReorderLevel, f))
                     .RuleFor(p => p.CategoryId, f => f.PickRandom(categories).Id)
                     .RuleFor(p => p.SupplierId, f => f.PickRandom(suppliers).Id)
                     .Generate(400);
+                var random = new Random();
+                for (int i = 0; i < random.Next(5, 30); i++)
+                {
+                    var product = products[i];
+                    product.StockQuantity = product.ReorderLevel - random.Next(1, product.ReorderLevel - 2);
+                    product.Status = GetProductStatus(product.StockQuantity, product.ReorderLevel, new Faker());
+                }
                 context.Products.AddRange(products);
                 context.SaveChanges();
-
-                // Seed Users
+                
                 var users = new Faker<User>()
                     .RuleFor(u => u.Id, f => Guid.NewGuid())
                     .RuleFor(u => u.FirstName, f => f.Name.FirstName())
@@ -61,8 +114,7 @@ namespace cheez_ims_api.Data
                     .Generate(500);
                 context.Users.AddRange(users);
                 context.SaveChanges();
-
-                // Seed Orders
+                
                 var orders = new Faker<Order>()
                     .RuleFor(o => o.Id, f => Guid.NewGuid())
                     .RuleFor(o => o.OrderNumber, f => f.Random.Int())
@@ -76,8 +128,7 @@ namespace cheez_ims_api.Data
                     .Generate(1000);
                 context.Orders.AddRange(orders);
                 context.SaveChanges();
-
-                // Seed OrderItems
+                
                 var orderItems = new Faker<OrderItem>()
                     .RuleFor(oi => oi.Id, f => Guid.NewGuid())
                     .RuleFor(oi => oi.OrderId, f => f.PickRandom(orders).Id)
@@ -91,7 +142,13 @@ namespace cheez_ims_api.Data
                 var activities = new Faker<Activity>()
                     .RuleFor(a => a.Id, f => Guid.NewGuid())
                     .RuleFor(a => a.ActivityType, f => f.PickRandom<Enums.ActivityType>())
-                    .RuleFor(a => a.Message, f => f.Lorem.Sentence()) // TODO: Setup function to get sentences
+                    .RuleFor(a => a.Message, (f, a) => 
+                        GetActivityMessage(
+                            a.ActivityType, 
+                            f.PickRandom(products), 
+                            f.PickRandom(orders), 
+                            f.PickRandom(suppliers), f)
+                        )
                     .RuleFor(o => o.Timestamp, f => f.Date.Past(1).ToUniversalTime())
                     .RuleFor(a => a.UserId, f => f.PickRandom(users).Id)
                     .Generate(400);

@@ -66,6 +66,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         o.MapEnum<Enums.PaymentMethod>("payment_method");
         o.MapEnum<Enums.OrderStatus>("order_status");
         o.MapEnum<Enums.PaymentStatus>("payment_status");
+        o.MapEnum<Enums.ActivityType>("activity_type");
+        o.MapEnum<Enums.ProductStatus>("product_status");
     }));
 
 

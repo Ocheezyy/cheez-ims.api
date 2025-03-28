@@ -1,5 +1,6 @@
 using cheez_ims_api.Data;
 using cheez_ims_api.Dtos;
+using cheez_ims_api.models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
@@ -38,6 +39,44 @@ namespace cheez_ims_api.Controllers
                        .Database
                        .SqlQuery<DashboardOverviewDto>(query)
                        .ToListAsync();
+        }
+
+        [HttpGet("overview-stats")]
+        [SwaggerOperation(OperationId = "GetOverviewStats", Summary = " Get Dashboard overview Card Stats",
+            Tags = new[] { "Dashboard" })]
+        public async Task<ActionResult<DashboardOverviewStatsDto>> GetDashboardOverviewStats()
+        {
+            var inventoryStats = await _context.Products
+                .GroupBy(p => 1) // Grouping ensures a single row result
+                .Select(g => new
+                {
+                    TotalInventory = g.Sum(p => p.StockQuantity),
+                    LowStockInventory = g.Count(p => p.Status == Enums.ProductStatus.LowStock),
+                    TotalValue = g.Sum(p => p.StockQuantity * p.Price)
+                })
+                .FirstOrDefaultAsync() ?? new { TotalInventory = 0, LowStockInventory = 0, TotalValue = new Decimal(0.0) };;
+            var activeOrders = await _context.Orders.CountAsync(o => o.Status == Enums.OrderStatus.Pending || o.Status == Enums.OrderStatus.Shipped);
+
+            var dashboardStats = new DashboardOverviewStatsDto
+            {
+                ActiveOrders = activeOrders,
+                TotalValue = inventoryStats.TotalValue,
+                TotalInventory = inventoryStats.TotalInventory,
+                LowStockInventory = inventoryStats.LowStockInventory,
+            };
+            return dashboardStats;
+        }
+
+        [HttpGet("recent-activity")]
+        [SwaggerOperation(OperationId = "GetRecentActivity", Summary = "Get Recent Activity",
+            Tags = new[] { "Dashboard" })]
+        public async Task<ActionResult<IEnumerable<Activity>>> GetRecentActivity()
+        {
+            return await _context.Activities
+                .OrderByDescending(a => a.Timestamp)
+                .Take(8)
+                .Include(a => a.User)
+                .ToListAsync();
         }
         
     }

@@ -28,7 +28,10 @@ namespace cheez_ims_api.models
         public int StockQuantity { get; set; }
         
         [Column("reorder_level")]
-        public int ReorderLevel { get; set; }  // Min stock before alert
+        public int ReorderLevel { get; set; }
+        
+        [Column("status")]
+        public Enums.ProductStatus Status { get; set; }
 
         // Foreign Keys & Navigation Properties
         [Column("category_id")]

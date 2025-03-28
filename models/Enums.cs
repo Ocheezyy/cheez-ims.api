@@ -32,5 +32,14 @@ public static class Enums
         RestockProduct,
         LowStockProduct,
         CreateSupplier,
+        ShippedOrder,
+    }
+
+    public enum ProductStatus
+    {
+        InStock,
+        LowStock,
+        OutOfStock,
+        Discontinued,
     }
 }

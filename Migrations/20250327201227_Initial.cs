@@ -13,9 +13,11 @@ namespace cheez_ims_api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:Enum:activity_type", "create_order,create_product,create_supplier,low_stock_product,restock_product,shipped_order")
                 .Annotation("Npgsql:Enum:order_status", "canceled,delivered,pending,returned,shipped")
                 .Annotation("Npgsql:Enum:payment_method", "bitcoin,cash,credit_card")
-                .Annotation("Npgsql:Enum:payment_status", "paid,pending,refunded");
+                .Annotation("Npgsql:Enum:payment_status", "paid,pending,refunded")
+                .Annotation("Npgsql:Enum:product_status", "discontinued,in_stock,low_stock,out_of_stock");
 
             migrationBuilder.CreateTable(
                 name: "categories",
@@ -72,6 +74,7 @@ namespace cheez_ims_api.Migrations
                     price = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     stock_quantity = table.Column<int>(type: "integer", nullable: false),
                     reorder_level = table.Column<int>(type: "integer", nullable: false),
+                    status = table.Column<Enums.ProductStatus>(type: "product_status", nullable: false),
                     category_id = table.Column<Guid>(type: "uuid", nullable: false),
                     supplier_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -97,7 +100,7 @@ namespace cheez_ims_api.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    activity_type = table.Column<int>(type: "integer", nullable: false),
+                    activity_type = table.Column<Enums.ActivityType>(type: "activity_type", nullable: false),
                     message = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false)

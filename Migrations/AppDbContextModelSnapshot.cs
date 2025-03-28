@@ -21,9 +21,11 @@ namespace cheez_ims_api.Migrations
                 .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "activity_type", new[] { "create_order", "create_product", "create_supplier", "low_stock_product", "restock_product", "shipped_order" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "order_status", new[] { "canceled", "delivered", "pending", "returned", "shipped" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "payment_method", new[] { "bitcoin", "cash", "credit_card" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "payment_status", new[] { "paid", "pending", "refunded" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "product_status", new[] { "discontinued", "in_stock", "low_stock", "out_of_stock" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("cheez_ims_api.models.Activity", b =>
@@ -33,8 +35,8 @@ namespace cheez_ims_api.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<int>("ActivityType")
-                        .HasColumnType("integer")
+                    b.Property<Enums.ActivityType>("ActivityType")
+                        .HasColumnType("activity_type")
                         .HasColumnName("activity_type");
 
                     b.Property<string>("Message")
@@ -198,6 +200,10 @@ namespace cheez_ims_api.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)")
                         .HasColumnName("sku");
+
+                    b.Property<Enums.ProductStatus>("Status")
+                        .HasColumnType("product_status")
+                        .HasColumnName("status");
 
                     b.Property<int>("StockQuantity")
                         .HasColumnType("integer")
