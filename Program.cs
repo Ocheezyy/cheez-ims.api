@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(corsOrigins,
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173", "https://cheez-ims.ocheezy.dev")
+            policy.WithOrigins("https://cheez-ims.ocheezy.dev")
                   .AllowAnyMethod()
                   .AllowAnyHeader();
         });
